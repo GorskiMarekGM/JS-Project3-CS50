@@ -1,13 +1,18 @@
 document.addEventListener('DOMContentLoaded', function() {
 
+ 
+
   // Use buttons to toggle between views
   document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
   document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
   document.querySelector('#compose').addEventListener('click', compose_email);
 
+  //post_email();
+  read_form();
   // By default, load the inbox
   load_mailbox('inbox');
+ 
 });
 
 function compose_email() {
@@ -30,4 +35,59 @@ function load_mailbox(mailbox) {
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+}
+//------------------------------------------------
+
+function read_form(){
+    document.querySelector('form').onsubmit = function(){
+      const recipients = document.querySelector('#compose-recipients').value;
+      const subject = document.querySelector('#compose-subject').value;
+      const body = document.querySelector('#compose-body').value;
+
+      fetch('/emails', {
+        method: 'POST',
+        body: JSON.stringify({
+            recipients: recipients,
+            subject: subject,
+            body: body
+        })
+      })
+      .then(response => response.json())
+      .then(result => {
+          // Print result
+          console.log(result);
+      });
+      alert(`Our email has been sent, ${recipients}! ${subject}! ${body}!`);
+  };
+}
+function send_post_email(){
+
+  const name = "testmail@gmail.com";
+
+  fetch('/emails', {
+    method: 'POST',
+    body: JSON.stringify({
+        recipients: name,
+        subject: 'Meeting time',
+        body: 'How about we meet tomorrow at 3pm?'
+    })
+  })
+  .then(response => response.json())
+  .then(result => {
+      // Print result
+      console.log(result);
+  });
+}
+
+
+
+function get_email_name(){
+  fetch('/emails/inbox')
+  .then(response => response.json())
+  .then(emails => {
+      // Print emails
+      console.log(emails);
+
+      // ... do something else with emails ...
+  });
 }
