@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
 
- 
+  get_inbox();
 
   // Use buttons to toggle between views
   document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
   read_form();
   // By default, load the inbox
   load_mailbox('inbox');
+  
  
 });
 
@@ -58,36 +59,28 @@ function read_form(){
           console.log(result);
       });
       alert(`Our email has been sent, ${recipients}! ${subject}! ${body}!`);
+      load_mailbox('inbox');
   };
 }
-function send_post_email(){
 
-  const name = "testmail@gmail.com";
-
-  fetch('/emails', {
-    method: 'POST',
-    body: JSON.stringify({
-        recipients: name,
-        subject: 'Meeting time',
-        body: 'How about we meet tomorrow at 3pm?'
-    })
-  })
-  .then(response => response.json())
-  .then(result => {
-      // Print result
-      console.log(result);
-  });
-}
-
-
-
-function get_email_name(){
+function get_inbox(){
   fetch('/emails/inbox')
   .then(response => response.json())
   .then(emails => {
-      // Print emails
-      console.log(emails);
 
-      // ... do something else with emails ...
+    emails.forEach(email => {
+
+      document.querySelector('.emails-content').innerHTML += `<div class="card" style="width: 18rem;">
+            <div class="card-body">
+              <h5 class="card-title">${email.subject}</h5>
+              <h6 class="card-subtitle mb-2 text-muted">From: ${email.sender}</h6>
+              <p class="card-text">${email.body}</p>
+              <h6 class="card-subtitle mb-2 text-muted">${email.timestamp}</h6>
+            </div>
+          </div>
+      `;
+
+    });
+
   });
 }
