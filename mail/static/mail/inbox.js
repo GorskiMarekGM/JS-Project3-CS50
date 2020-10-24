@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-  get_inbox();
 
   // Use buttons to toggle between views
   document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
@@ -36,6 +35,8 @@ function load_mailbox(mailbox) {
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+
+  get_inbox(mailbox);
 }
 //------------------------------------------------
 
@@ -63,19 +64,20 @@ function read_form(){
   };
 }
 
-function get_inbox(){
-  fetch('/emails/inbox')
+function get_inbox(mailbox){
+  fetch('/emails/'+mailbox)
   .then(response => response.json())
   .then(emails => {
 
     emails.forEach(email => {
 
-      document.querySelector('.emails-content').innerHTML += `<div class="card" style="width: 18rem;">
+      document.querySelector('#emails-view').innerHTML += `<div class="card" style="width: 18rem;">
             <div class="card-body">
               <h5 class="card-title">${email.subject}</h5>
               <h6 class="card-subtitle mb-2 text-muted">From: ${email.sender}</h6>
               <p class="card-text">${email.body}</p>
               <h6 class="card-subtitle mb-2 text-muted">${email.timestamp}</h6>
+              <a href="#" class="card-link">Archive</a>
             </div>
           </div>
       `;
