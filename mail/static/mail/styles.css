@@ -1,3 +1,7 @@
 textarea {
     min-height: 400px;
+    background-color: #5e5e5e;
+}
+.card-body:hover{
+    cursor: pointer;
 }
