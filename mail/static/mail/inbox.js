@@ -25,6 +25,7 @@ function compose_email() {
   document.querySelector('#compose-recipients').value = '';
   document.querySelector('#compose-subject').value = '';
   document.querySelector('#compose-body').value = '';
+
 }
 
 function load_mailbox(mailbox) {
@@ -60,7 +61,6 @@ function read_form(){
           // Print result
           console.log(result);
       });
-      alert(`Our email has been sent, ${recipients}! ${subject}! ${body}!`);
       load_mailbox('inbox');
   };
 }
@@ -82,9 +82,6 @@ function is_read(mailbox){
       document.querySelector(`#email-${i}`).style.backgroundColor = '#5e5e5e';
       document.querySelector(`#email-${i}`).style.cursor='pointer';
       document.querySelector(`#email-${i}`).style.color = 'white';
-
-      console.log('changed');
-      console.log('bool:'+ emails[i].read);
     }else{
       change_style_onclick(emails[i],i);
     }
@@ -109,7 +106,27 @@ function archive(id){
   })
   load_mailbox('archive');
 }
+function replay_email(sender,subject,body,time){
+  //Show compose view and hide other views
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'block';
+
+  // // Clear out composition fields
+  document.querySelector('#compose-recipients').value = sender;
+
+  if(subject.substring(0,3) === 'Re:')
+  {
+    document.querySelector('#compose-subject').value += subject;
+  }else{
+    document.querySelector('#compose-subject').value = 'Re: ' + subject;
+  }
+
+  document.querySelector('#compose-body').value = 'On: '+ time + ' ' + sender + ' wrote: '+ body;
+
+}
+
 function display_email(id){
+  //alert('display email func');
   fetch('/emails/'+id)
   .then(response => response.json())
   .then(email => {
@@ -124,11 +141,12 @@ function display_email(id){
                 <p class="card-text">${email.body}</p><br>
                 <h6 class="card-subtitle mb-2" style="float:right;">${email.timestamp}</h6>
                 <button onclick="archive(${id})" class="btn btn-sm btn-outline-primary" style="background-color:white">Archive</button>
-                <button onclick="reply(${id})" class="btn btn-sm btn-outline-primary">Reply</button>
+                <button onclick="replay_email('${email.sender}','${email.subject}','${email.body}','${email.timestamp}')" class="btn btn-sm btn-outline-primary">Reply</button>
               </div>
             </div>
           </div>
       `;
+
   });
 }
 function change_style_onclick(email,i){
@@ -139,10 +157,7 @@ function change_style_onclick(email,i){
     display_email(email.id);
 
     read_true(email.id);
-    console.log(email.read);
   }
-  console.log('id: '+email.id);
-  console.log('i: '+i);
 }
 function get_inbox(mailbox){
   let i = 0;
@@ -151,9 +166,6 @@ function get_inbox(mailbox){
   .then(emails => {
 
     emails.forEach(email => {
-
-      // console.log(email.id);
-      // console.log(email.read);
 
       document.querySelector('#emails-view').innerHTML += `<div class="card" style="width: 18rem;">
             <div id="email-${i}">
