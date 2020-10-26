@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function() {
 
 
   // Use buttons to toggle between views
@@ -100,6 +100,15 @@ function read_true(id){
     })
   })
 }
+function archive(id){
+  fetch('/emails/'+id, {
+    method: 'PUT',
+    body: JSON.stringify({
+        archived: true
+    })
+  })
+  load_mailbox('archive');
+}
 function display_email(id){
   fetch('/emails/'+id)
   .then(response => response.json())
@@ -110,11 +119,12 @@ function display_email(id){
             <div id="email-1">
               <div class="card-body" style="padding:20px;">
                 <h6 class="card-title">Recipents: ${email.recipients}</h6><br>
-                <h5 class="card-title">${email.subject}</h5>
                 <h6 class="card-subtitle mb-2">From: ${email.sender}</h6><br>
+                <h5 class="card-title">${email.subject}</h5>
                 <p class="card-text">${email.body}</p><br>
                 <h6 class="card-subtitle mb-2" style="float:right;">${email.timestamp}</h6>
-                <a href="#" class="card-link">Archive</a>
+                <button onclick="archive(${id})" class="btn btn-sm btn-outline-primary" style="background-color:white">Archive</button>
+                <button onclick="reply(${id})" class="btn btn-sm btn-outline-primary">Reply</button>
               </div>
             </div>
           </div>
@@ -152,7 +162,7 @@ function get_inbox(mailbox){
                 <h6 class="card-subtitle mb-2">From: ${email.sender}</h6>
                 <p class="card-text">${email.body}</p>
                 <h6 class="card-subtitle mb-2">${email.timestamp}</h6>
-                <a href="#" class="card-link">Archive</a>
+                <button onclick="archive(${email.id})" class="btn btn-sm btn-outline-primary" style="background-color:white" >Archive</button>
               </div>
             </div>
           </div>
