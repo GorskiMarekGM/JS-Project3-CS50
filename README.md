@@ -1,5 +1,4 @@
 <h2>Specification</h2>
-<hr>
 Using JavaScript, HTML, and CSS, complete the implementation of your single-page-app email client. You must fulfill the following requirements:
 
 <h4>Send Mail:</h4> When a user submits the email composition form, add JavaScript code to actually send the email.
